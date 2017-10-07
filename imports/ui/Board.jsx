@@ -16,6 +16,7 @@ class Board extends Component {
 	componentDidMount(){
         this.canv();
 
+        this.createFood();
         this.createSnake();
         setInterval(this.showSnake.bind(this), 100);
 	    //this.showSnake();
@@ -46,6 +47,11 @@ class Board extends Component {
             dir:ndir
         });
     }
+    gameOver(){
+        this.setState({
+            gameOver:true
+        });
+    }
     moveSnake(){
         let s = this.state.snake;
         let nx = s[0].x;
@@ -66,11 +72,18 @@ class Board extends Component {
                 nx++;
                 break;
         }
+        if(nx===-1 || ny===-1 || nx=== this.props.width/10 || ny=== this.props.height/10 || this.collision(nx, ny)){
+            this.gameOver();
+            console.log(this.state.gameOver);
+        }
 
-        let tail = s[s.length-1];
-        s.pop();
-        tail.x = nx;
-        tail.y = ny;
+        const tail = {x: nx, y:ny};
+        if(nx === this.state.food.x && ny === this.state.food.y){
+            this.createFood();
+            this.addPoints();
+        }else{
+            s.pop();
+        }
         s.unshift(tail);
 
         this.setState({
@@ -83,25 +96,55 @@ class Board extends Component {
         this.moveSnake();
         for(let i=0; i<this.state.snake.length; i++){
             let c = this.state.snake[i];
-            let ctx = this.canvas.getContext("2d");
-            ctx.fillStyle="green";
-            ctx.fillRect(c.x*10, c.y*10, 10, 10);
+            this.paintCell("green", c);
         }
+        this.paintCell("red", this.state.food);
     }
 
     handleKeyDown(event){
         event.preventDefault();
         let ndir = this.state.dir;
-        if(event.keyCode === 37) ndir = "left";
-        else if(event.keyCode === 38) ndir = "up";
-        else if(event.keyCode === 39) ndir = "right";
-        else if(event.keyCode === 40) ndir = "down";
+        if(event.keyCode === 37 && ndir!== "right") ndir = "left";
+        else if(event.keyCode === 38 && ndir!== "down") ndir = "up";
+        else if(event.keyCode === 39 && ndir!== "left") ndir = "right";
+        else if(event.keyCode === 40 && ndir!== "up") ndir = "down";
         this.changeDirection(ndir);
+    }
+
+    createFood(){
+        const food = {
+            x: Math.round(Math.random()* (this.props.width-10)/10),
+            y: Math.round(Math.random()* (this.props.height-10)/10)
+        };
+        this.setState({
+            food: food
+        });
+
+    }
+    addPoints(){
+        this.setState({
+            score: this.state.score+10
+        });
+        console.log(this.state.score);
+    }
+    collision(x, y){
+        const s = this.state.snake;
+        for (let i=0; i<s.length; i++ ){
+            if( s[i].x === x && s[i].y === y) return true;
+        }
+        return false;
+    }
+
+    paintCell(color, cell){
+        const ctx = this.canvas.getContext("2d");
+        ctx.fillStyle=color;
+        ctx.fillRect(cell.x*10, cell.y*10, 10, 10);
     }
 
     render(){
         return(
             <div className="Board">
+                <p>Score: {this.state.score}</p>
                 <canvas
                     width={this.props.width}
                     height={this.props.height}
