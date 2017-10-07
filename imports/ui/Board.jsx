@@ -6,57 +6,99 @@ class Board extends Component {
 		super(props);
 		this.scale = 10;
         this.state = {
-                x: 0,
-                y: 0,
-                xspeed: 0,
-                yspeed: 0
+            snake: [],
+            dir: "right",
+            gameOver: false,
+            score: 0
         }
 	}
 
 	componentDidMount(){
-        this.showSnake();
-    }
-    componentWillUpdate(){
-        this.showSnake();
-    }
-    updateSnake(dir){
-        let speed = {};
+        this.canv();
 
-        switch (dir){
-            case "up":
-                speed.y = -1;
-                break;
-            case "down":
-                speed.y = 1;
-                break;
-            case "left":
-                speed.x = -1;
-                break;
-            case "right":
-                speed.x = 1;
-                break;
+        this.createSnake();
+        setInterval(this.showSnake.bind(this), 100);
+	    //this.showSnake();
+    }
+    componentWillMount(){
+        document.addEventListener('keydown', this.handleKeyDown.bind(this));
+    }
+    canv(){
+        let ctx = this.canvas.getContext("2d");
+        ctx.fillStyle="white";
+        ctx.fillRect(0, 0, this.props.width, this.props.height);
+        ctx.strokeStyle = "black";
+        ctx.strokeRect(0, 0, this.props.width, this.props.height);
+    }
+    createSnake(){
+        const len = 5;
+        let s = this.state.snake;
+        for (let i = len-1; i>=0; i--){
+            s.push({x:i, y:0});
         }
         this.setState({
-            xspeed: speed.x,
-            yspeed: speed.y
+            snake:s
+        });
+        console.log(this.state.snake.length);
+    }
+    changeDirection(ndir){
+        this.setState({
+            dir:ndir
         });
     }
     moveSnake(){
-        const posx = this.state.x;
-        const posy = this.state.y;
-        const speedx = this.state.xspeed;
-        const speedy = this.state.yspeed;
+        let s = this.state.snake;
+        let nx = s[0].x;
+        let ny = s[0].y;
+        let d = this.state.dir;
+
+        switch (d){
+            case "up":
+                ny--;
+                break;
+            case "down":
+                ny++;
+                break;
+            case "left":
+                nx--;
+                break;
+            case "right":
+                nx++;
+                break;
+        }
+
+        let tail = s[s.length-1];
+        s.pop();
+        tail.x = nx;
+        tail.y = ny;
+        s.unshift(tail);
+
         this.setState({
-            x: posx + speedx*this.scale,
-            y: posy + speedy*this.scale
+            snake:s
         });
     }
+
     showSnake(){
-        let ctx = this.canvas.getContext("2d");
-        ctx.rect(this.state.x, this.state.y, 10, 10);
-        ctx.fillStyle="green";
-        ctx.fill();
+        this.canv();
+        this.moveSnake();
+        for(let i=0; i<this.state.snake.length; i++){
+            let c = this.state.snake[i];
+            let ctx = this.canvas.getContext("2d");
+            ctx.fillStyle="green";
+            ctx.fillRect(c.x*10, c.y*10, 10, 10);
+        }
     }
+
+    handleKeyDown(event){
+        event.preventDefault();
+        let ndir = this.state.dir;
+        if(event.keyCode === 37) ndir = "left";
+        else if(event.keyCode === 38) ndir = "up";
+        else if(event.keyCode === 39) ndir = "right";
+        else if(event.keyCode === 40) ndir = "down";
+        this.changeDirection(ndir);
+    }
+
     render(){
         return(
             <div className="Board">
