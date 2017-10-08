@@ -1,1 +1,23 @@
 /* CSS declarations go here */
+body{
+    background-color: #181c1f;
+    color: #d2edf4;
+}
+header {
+    font-family: sans-serif;
+    background: #414a64;
+    background-image: linear-gradient(to bottom, #414a64, #121213 100%);
+    padding: 20px 15px 15px 15px;
+    position: relative;
+}
+.GameOver {
+    color: black;
+    background-color: #8d8d8d;
+    padding: 20px 15px 15px 15px;
+    position: relative;
+    text-align: center;
+}
+canvas {
+    display: block;
+    margin: auto;
+}

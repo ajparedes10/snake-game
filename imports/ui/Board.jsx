@@ -1,35 +1,39 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
- 
+import GameOver from "./GameOver";
+
 class Board extends Component {
-	constructor(props) {
-		super(props);
-		this.scale = 10;
+    constructor(props) {
+        super(props);
+        this.scale = 10;
         this.state = {
             snake: [],
             dir: "right",
             gameOver: false,
             score: 0
         }
-	}
+    }
 
-	componentDidMount(){
+    componentDidMount(){
         this.canv();
 
         this.createFood();
         this.createSnake();
         setInterval(this.showSnake.bind(this), 100);
-	    //this.showSnake();
+
     }
     componentWillMount(){
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
     }
-    canv(){
-        let ctx = this.canvas.getContext("2d");
-        ctx.fillStyle="white";
-        ctx.fillRect(0, 0, this.props.width, this.props.height);
-        ctx.strokeStyle = "black";
-        ctx.strokeRect(0, 0, this.props.width, this.props.height);
+    canv() {
+        if (this.canvas === null || this.canvas === undefined){}
+        else {
+            let ctx = this.canvas.getContext("2d");
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, this.props.width, this.props.height);
+            ctx.strokeStyle = "black";
+            ctx.strokeRect(0, 0, this.props.width, this.props.height);
+        }
     }
     createSnake(){
         const len = 5;
@@ -92,13 +96,16 @@ class Board extends Component {
     }
 
     showSnake(){
-        this.canv();
-        this.moveSnake();
-        for(let i=0; i<this.state.snake.length; i++){
-            let c = this.state.snake[i];
-            this.paintCell("green", c);
+        if (this.canvas === null || this.canvas === undefined){}
+        else {
+            this.canv();
+            this.moveSnake();
+            for (let i = 0; i < this.state.snake.length; i++) {
+                let c = this.state.snake[i];
+                this.paintCell("green", c);
+            }
+            this.paintCell("red", this.state.food);
         }
-        this.paintCell("red", this.state.food);
     }
 
     handleKeyDown(event){
@@ -136,20 +143,28 @@ class Board extends Component {
     }
 
     paintCell(color, cell){
-        const ctx = this.canvas.getContext("2d");
-        ctx.fillStyle=color;
-        ctx.fillRect(cell.x*10, cell.y*10, 10, 10);
+        if (this.canvas === null || this.canvas === undefined){}
+        else {
+            const ctx = this.canvas.getContext("2d");
+            ctx.fillStyle = color;
+            ctx.fillRect(cell.x * 10, cell.y * 10, 10, 10);
+        }
     }
 
     render(){
         return(
             <div className="Board">
-                <p>Score: {this.state.score}</p>
-                <canvas
-                    width={this.props.width}
-                    height={this.props.height}
-                    ref={(c)=> this.canvas = c}>
-				</canvas>
+                {!this.state.gameOver ?
+                    <div>
+                        <p>Score: {this.state.score}</p>
+                        <canvas
+                            width={this.props.width}
+                            height={this.props.height}
+                            ref={(c) => this.canvas = c}>
+                        </canvas>
+                    </div>:
+                    <GameOver score={this.state.score}/>
+                }
             </div>
         );
     }
