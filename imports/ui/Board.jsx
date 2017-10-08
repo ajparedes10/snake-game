@@ -11,7 +11,7 @@ class Board extends Component {
             gameOver: false,
             score: 0
         }
-	}
+	} 
 
 	componentDidMount(){
         this.canv();
@@ -22,6 +22,9 @@ class Board extends Component {
 	    //this.showSnake();
     }
     componentWillMount(){
+
+        
+
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
     }
     canv(){
