@@ -32,7 +32,7 @@ class App extends Component {
                     <AccountsUIWrapper />
                 </header>
 
-                { this.props.currentUser && this.state.games ?
+                { this.props.currentUser && this.props.games ?
                     <BoardContainer width={this.width} height={this.height} potentialGame={this.props.potentialGame}/> : ''
                 }
                 <Leaderboard games={this.props.games}/>
@@ -48,12 +48,6 @@ App.propTypes = {
 };
 
 export default createContainer((props) => {
-    Meteor.subscribe('games', {
-      onReady: function () {
-        console.log("omg");
-      }
-    });
-
   return {
     games: Games.find({  }).fetch(),
     currentUser: Meteor.user(),

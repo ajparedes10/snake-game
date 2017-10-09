@@ -37,14 +37,14 @@ class BoardContainer extends Component {
 
     render(){
         return(
-             <BoardContainer width={this.props.width} height={this.props.height} activeGameId={this.state.activeGameId}/> : ''
+             <Board width={this.props.width} height={this.props.height} activeGameId={this.state.activeGameId}/> : ''
         );
     }
 }
 BoardContainer.propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    potentialGame: PropTypes.string.isRequired,
+    potentialGame: PropTypes.object,
 };
 
 export default BoardContainer;
