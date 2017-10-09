@@ -5,7 +5,7 @@ import { createContainer } from 'meteor/react-meteor-data';
 
 import { Games } from '../api/games.js';
 
-import Board from "./Board.jsx";
+import BoardContainer from "./BoardContainer.jsx";
 import Leaderboard from "./Leaderboard.jsx";
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
  
@@ -14,7 +14,16 @@ class App extends Component {
         super(props);
         this.height = 600;
         this.width = 600;
+        this.state = {
+            activeGameId: undefined
+        }
     }
+
+    componentDidMount() {
+    }
+
+    
+
     render(){
         return(
             <div className="App">
@@ -23,8 +32,8 @@ class App extends Component {
                     <AccountsUIWrapper />
                 </header>
 
-                { this.props.currentUser ?
-                    <Board width={this.width} height={this.height}/> : ''
+                { this.props.currentUser && this.state.games ?
+                    <BoardContainer width={this.width} height={this.height} potentialGame={this.props.potentialGame}/> : ''
                 }
                 <Leaderboard games={this.props.games}/>
             </div>
@@ -35,11 +44,19 @@ class App extends Component {
 App.propTypes = {
   games: PropTypes.array.isRequired,
   currentUser: PropTypes.object,
+  potentialGame: PropTypes.object,
 };
 
-export default createContainer(() => {
+export default createContainer((props) => {
+    Meteor.subscribe('games', {
+      onReady: function () {
+        console.log("omg");
+      }
+    });
+
   return {
-    games: Games.find({ active: false }).fetch(),
+    games: Games.find({  }).fetch(),
     currentUser: Meteor.user(),
+    potentialGame: Games.findOne({ users: { $size: 1 }, gameOver: false })
   };
 }, App);
