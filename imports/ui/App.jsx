@@ -18,12 +18,7 @@ class App extends Component {
             activeGameId: undefined
         }
     }
-
-    componentDidMount() {
-    }
-
     
-
     render(){
         return(
             <div className="App">
@@ -49,7 +44,7 @@ App.propTypes = {
 
 export default createContainer((props) => {
   return {
-    games: Games.find({  }).fetch(),
+    games: Games.find({  }, { sort: { score: -1 }, limit: 10 }).fetch(),
     currentUser: Meteor.user(),
     potentialGame: Games.findOne({ users: { $size: 1 }, gameOver: false })
   };

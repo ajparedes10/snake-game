@@ -6,11 +6,20 @@ import { Games } from '../api/games.js';
 class Leaderboard extends Component {
   
     render(){
-        return this.props.games.map((game) => (
-            <div key={game._id}>
-                {game.text}
-            </div>
-        ));
+        return (
+          <div className="leaderboard">
+            <h2>Leaderboard</h2>
+            <ul>
+              {this.props.games.map(function(listValue){
+                return <li key={listValue._id}>
+                  <b>Score:</b> {listValue.score}
+                  <br/><b>Players:</b> {listValue.usernames.join(", ")}
+                  <br/><b>When:</b> {(new Date(listValue.createdAt)).toLocaleDateString()}
+                </li>;
+              })}
+            </ul>
+          </div>
+        );
     }
 }
  

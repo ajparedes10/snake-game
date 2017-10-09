@@ -24,7 +24,7 @@ class BoardContainer extends Component {
             var id = Games.insert({
                 createdAt: new Date(), // current time
                 users: [Meteor.userId()],           // _id of logged in user
-                // username: Meteor.user().username,
+                usernames: [Meteor.user().username],
                 partner: "",
                 score: 0,
                 snake: [],

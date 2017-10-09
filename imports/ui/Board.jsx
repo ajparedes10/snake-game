@@ -16,10 +16,15 @@ class Board extends Component {
 
         console.log(this.props.currentGame);
         if (!this.props.currentGame.users.includes(Meteor.userId())) {
-            let a = this.props.currentGame.users;
-            a.push(Meteor.userId());
+            let users = this.props.currentGame.users;
+            let usernames = this.props.currentGame.usernames;
+            users.push(Meteor.userId());
+            usernames.push(Meteor.user().username);
+
             Games.update(this.props.currentGame._id, {
-              $set: { users: a },
+              $set: { users: users,
+                  usernames: usernames
+              },
             });
         }
     }
@@ -197,7 +202,7 @@ class Board extends Component {
             <div className="Board">
                 {!this.props.currentGame.gameOver ?
                     <div>
-                        <span>Current players: {this.props.currentGame.users}</span>
+                        <span>Current players: {this.props.currentGame.usernames.join(", ")}</span>
                         <p>Score: {this.props.currentGame.score}</p>
                         <canvas
                             width={this.props.width}
@@ -205,7 +210,7 @@ class Board extends Component {
                             ref={(c) => this.canvas = c}>
                         </canvas>
                     </div>:
-                    <GameOver gameId={this.props.currentGame._id} score={this.props.currentGame.score} players={this.props.currentGame.users}/>
+                    <GameOver gameId={this.props.currentGame._id} score={this.props.currentGame.score} players={this.props.currentGame.usernames}/>
                 }
             </div>
         );

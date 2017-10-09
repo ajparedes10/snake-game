@@ -2,9 +2,10 @@
 body{
     background-color: #181c1f;
     color: #d2edf4;
+    font-family: sans-serif;
 }
 header {
-    font-family: sans-serif;
+    
     background: #414a64;
     background-image: linear-gradient(to bottom, #414a64, #121213 100%);
     padding: 20px 15px 15px 15px;
@@ -16,8 +17,30 @@ header {
     padding: 20px 15px 15px 15px;
     position: relative;
     text-align: center;
+    width: 40%;
+    margin: 40px auto;
+    border-radius: 40px;
 }
 canvas {
     display: block;
     margin: auto;
+}
+
+.leaderboard {
+    position: absolute;
+    top: 180px;
+    right: 20px;
+    background-color: #414a64;
+    color: white;
+    padding: 20px;
+    border-radius: 40px;
+}
+
+.leaderboard ul li {
+    margin-bottom: 20px;
+    padding-right: 0;
+}
+
+.leaderboard ul {
+    padding-left: 15px;
 }
