@@ -43,6 +43,8 @@ App.propTypes = {
 };
 
 export default createContainer((props) => {
+  Meteor.subscribe('games');
+  
   return {
     games: Games.find({  }, { sort: { score: -1 }, limit: 10 }).fetch(),
     currentUser: Meteor.user(),

@@ -21,11 +21,13 @@ class Board extends Component {
             users.push(Meteor.userId());
             usernames.push(Meteor.user().username);
 
-            Games.update(this.props.currentGame._id, {
-              $set: { users: users,
-                  usernames: usernames
-              },
-            });
+            // Games.update(this.props.currentGame._id, {
+            //   $set: { users: users,
+            //       usernames: usernames
+            //   },
+            // });
+
+            Meteor.call('games.updateUsers', this.props.currentGame._id, users, usernames);
         }
     }
 
@@ -42,9 +44,11 @@ class Board extends Component {
 
     componentWillUnmount() {
         if (this.props.currentGame) {
-            Games.update(this.props.currentGame._id, {
-              $set: { gameOver: false },
-            });
+            // Games.update(this.props.currentGame._id, {
+            //   $set: { gameOver: false },
+            // });
+
+            Meteor.call('games.updateGameOver', this.props.currentGame._id, false);
         }
     }
 
@@ -67,9 +71,10 @@ class Board extends Component {
         // this.setState({
         //     snake:s
         // });
-        Games.update(this.props.currentGame._id, {
-          $set: { snake: s },
-        });
+        // Games.update(this.props.currentGame._id, {
+        //   $set: { snake: s },
+        // });
+        Meteor.call('games.updateSnake', this.props.currentGame._id, s);
         console.log(this.props.currentGame.snake.length);
     }
     changeDirection(ndir){
@@ -77,9 +82,11 @@ class Board extends Component {
         //     dir:ndir
         // });
 
-        Games.update(this.props.currentGame._id, {
-          $set: { dir:ndir },
-        });
+        // Games.update(this.props.currentGame._id, {
+        //   $set: { dir:ndir },
+        // });
+
+        Meteor.call('games.updateDir', this.props.currentGame._id, ndir);
 
     }
     gameOver(){
@@ -87,9 +94,11 @@ class Board extends Component {
         //     gameOver:true
         // });
 
-        Games.update(this.props.currentGame._id, {
-          $set: { gameOver:true },
-        });
+        // Games.update(this.props.currentGame._id, {
+        //   $set: { gameOver:true },
+        // });
+
+        Meteor.call('games.updateGameOver', this.props.currentGame._id, true);
     }
     moveSnake(){
         let s = this.props.currentGame.snake;
@@ -129,9 +138,10 @@ class Board extends Component {
         //     snake:s
         // });
 
-        Games.update(this.props.currentGame._id, {
-          $set: { snake:s },
-        });
+        // Games.update(this.props.currentGame._id, {
+        //   $set: { snake:s },
+        // });
+        Meteor.call('games.updateSnake', this.props.currentGame._id, s);
     }
 
     showSnake(){
@@ -166,18 +176,23 @@ class Board extends Component {
         //     food: food
         // });
 
-        Games.update(this.props.currentGame._id, {
-          $set: { food: food },
-        });
+        // Games.update(this.props.currentGame._id, {
+        //   $set: { food: food },
+        // });
+
+        Meteor.call('games.updateFood', this.props.currentGame._id, food);
 
     }
     addPoints(){
         // this.setState({
         //     score: this.props.currentGame.score+10
         // });
-        Games.update(this.props.currentGame._id, {
-          $set: { score: this.props.currentGame.score+10 },
-        });
+        // Games.update(this.props.currentGame._id, {
+        //   $set: { score: this.props.currentGame.score+10 },
+        // });
+
+        Meteor.call('games.updateScore', this.props.currentGame._id, this.props.currentGame.score+10);
+
         console.log(this.props.currentGame.score);
     }
     collision(x, y){
@@ -219,11 +234,12 @@ class Board extends Component {
 Board.propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    activeGameId: PropTypes.string.isRequired,
+    activeGameId: PropTypes.string,
     currentGame: PropTypes.object
 };
 
 export default createContainer((props) => {
+    Meteor.subscribe('games');
   return {
     currentGame: Games.findOne(props.activeGameId),
   };
