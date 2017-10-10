@@ -11,7 +11,6 @@ class Board extends Component {
         super(props);
         this.scale = 10;
         this.state = {
-            // game: {}
         }
 
         console.log(this.props.currentGame);
@@ -21,33 +20,24 @@ class Board extends Component {
             users.push(Meteor.userId());
             usernames.push(Meteor.user().username);
 
-            // Games.update(this.props.currentGame._id, {
-            //   $set: { users: users,
-            //       usernames: usernames
-            //   },
-            // });
-
             Meteor.call('games.updateUsers', this.props.currentGame._id, users, usernames);
         }
     }
 
     componentDidMount(){
         this.canv();
-
+        <!-- Julio Poveda: que bien que hagan llamados a métodos en vez de poner todo el código, se ve muy organizado -->
         this.createFood();
         this.createSnake();
         setInterval(this.showSnake.bind(this), 100);
     }
+    
     componentWillMount(){
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
     }
 
     componentWillUnmount() {
         if (this.props.currentGame) {
-            // Games.update(this.props.currentGame._id, {
-            //   $set: { gameOver: false },
-            // });
-
             Meteor.call('games.updateGameOver', this.props.currentGame._id, false);
         }
     }
@@ -62,44 +52,26 @@ class Board extends Component {
             ctx.strokeRect(0, 0, this.props.width, this.props.height);
         }
     }
+    
     createSnake(){
         const len = 5;
         let s = this.props.currentGame.snake;
         for (let i = len-1; i>=0; i--){
             s.push({x:i, y:0});
         }
-        // this.setState({
-        //     snake:s
-        // });
-        // Games.update(this.props.currentGame._id, {
-        //   $set: { snake: s },
-        // });
+
         Meteor.call('games.updateSnake', this.props.currentGame._id, s);
         console.log(this.props.currentGame.snake.length);
     }
+    
     changeDirection(ndir){
-        // this.setState({
-        //     dir:ndir
-        // });
-
-        // Games.update(this.props.currentGame._id, {
-        //   $set: { dir:ndir },
-        // });
-
         Meteor.call('games.updateDir', this.props.currentGame._id, ndir);
-
     }
+        
     gameOver(){
-        // this.setState({
-        //     gameOver:true
-        // });
-
-        // Games.update(this.props.currentGame._id, {
-        //   $set: { gameOver:true },
-        // });
-
         Meteor.call('games.updateGameOver', this.props.currentGame._id, true);
     }
+        
     moveSnake(){
         let s = this.props.currentGame.snake;
         let nx = s[0].x;
@@ -134,13 +106,6 @@ class Board extends Component {
         }
         s.unshift(tail);
 
-        // this.setState({
-        //     snake:s
-        // });
-
-        // Games.update(this.props.currentGame._id, {
-        //   $set: { snake:s },
-        // });
         Meteor.call('games.updateSnake', this.props.currentGame._id, s);
     }
 
@@ -172,29 +137,18 @@ class Board extends Component {
             x: Math.round(Math.random()* (this.props.width-10)/10),
             y: Math.round(Math.random()* (this.props.height-10)/10)
         };
-        // this.setState({
-        //     food: food
-        // });
-
-        // Games.update(this.props.currentGame._id, {
-        //   $set: { food: food },
-        // });
 
         Meteor.call('games.updateFood', this.props.currentGame._id, food);
 
     }
+        
     addPoints(){
-        // this.setState({
-        //     score: this.props.currentGame.score+10
-        // });
-        // Games.update(this.props.currentGame._id, {
-        //   $set: { score: this.props.currentGame.score+10 },
-        // });
 
         Meteor.call('games.updateScore', this.props.currentGame._id, this.props.currentGame.score+10);
 
         console.log(this.props.currentGame.score);
     }
+    
     collision(x, y){
         const s = this.props.currentGame.snake;
         for (let i=0; i<s.length; i++ ){
@@ -231,6 +185,7 @@ class Board extends Component {
         );
     }
 }
+        
 Board.propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
